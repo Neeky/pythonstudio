@@ -13,8 +13,9 @@ ENV LANG zh_CN.UTF-8
 WORKDIR /tmp/
 
 RUN set -ex \
+    && rpm -ivh https://repo.mysql.com//mysql80-community-release-el7-1.noarch.rpm \
     && yum -y install gcc gcc-c++ libffi libyaml-devel libffi-devel zlib zlib-devel openssl \
-    openssl-devel libyaml sqlite-devel libxml2 libxslt-devel libxml2-devel wget vim \
+    openssl-devel libyaml sqlite-devel libxml2 libxslt-devel libxml2-devel wget vim mysql-devel \
     && yum clean all 
 
 
@@ -39,12 +40,14 @@ RUN set -ex \
     && rm -rf /usr/src/python \
     && python3 --version
 
-RUN set -ex \
-    && pip3 install bs4 requests mysql-connector-python django ansible
-
 RUN echo "set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936" >> /etc/vimrc \
     && echo "set termencoding=utf-8" >> /etc/vimrc \
     && echo "set encoding=utf-8" >> /etc/vimrc 
+
+RUN set -ex \
+    && pip3 --no-cache-dir install mysqlclient bs4 requests mysql-connector-python django ansible
+
+
 
 CMD python3 --version
 
